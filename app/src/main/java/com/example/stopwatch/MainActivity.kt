@@ -1,10 +1,13 @@
 package com.example.stopwatch
 
-import androidx.appcompat.app.AppCompatActivity
+import android.R.string
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.Button
 import android.widget.Chronometer
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,16 +27,19 @@ class MainActivity : AppCompatActivity() {
         stoppwatch = findViewById<Chronometer>(R.id.stopwatch)
 
         // Restore the previous state
-        offset =  savedInstanceState.getLong(OFFSET_KEY)
-        running =  savedInstanceState.getBoolean(RUNNING_KEY)
-        if (running) {
-            stoppwatch.base = savedInstanceState.getLong(BASE_KEY)
-            stoppwatch.start()
+        if (savedInstanceState != null) {
+            offset =  savedInstanceState.getLong(OFFSET_KEY)
+            running =  savedInstanceState.getBoolean(RUNNING_KEY)
+            if (running) {
+                stoppwatch.base = savedInstanceState.getLong(BASE_KEY)
+                stoppwatch.start()
+            } else {
+                setBaseTime()
+            }
         }
-        offset =  savedInstanceState.getLong(OFFSET_KEY)
 
         // Handle start button touch event
-        var start = findViewById<Button>(R.id.start)
+        val start = findViewById<Button>(R.id.start)
         start.setOnClickListener{
 
             if(!running) {
@@ -44,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Handle pause button touch event
-        var pause = findViewById<Button>(R.id.pause)
+        val pause = findViewById<Button>(R.id.pause)
         pause.setOnClickListener{
 
             if(running) {
