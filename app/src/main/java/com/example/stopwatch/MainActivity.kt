@@ -11,8 +11,8 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
 
     var minTime: Long = 0
-    var startTime: Long = 600000
-    var duration: Long = 10000
+    var startTime: Long = 10000
+    var duration: Long = 1000
 
     var running = false
     var offset:Long = 0
@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity() {
     val RUNNING_KEY = "running"
     val BASE_KEY = "base"
 
-    var timeLeftInMillis = startTime
     lateinit var countDownTimer: Chronometer
 
 
@@ -32,13 +31,18 @@ class MainActivity : AppCompatActivity() {
         // Get a reference to the stopwatch
         countDownTimer = findViewById<Chronometer>(R.id.counter)
 
-        countDownTimer.base = startTime
+        if(countDownTimer.base <= minTime) {
+            countDownTimer.stop()
+        }
+
+        setBaseTime()
         // Restore the previous state
         if (savedInstanceState != null) {
             offset =  savedInstanceState.getLong(OFFSET_KEY)
             running =  savedInstanceState.getBoolean(RUNNING_KEY)
             if (running) {
-
+                countDownTimer.base = savedInstanceState.getLong(BASE_KEY)
+                countDownTimer.start()
             } else {
                 setBaseTime()
             }
@@ -59,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         pause.setOnClickListener{
 
             if(running) {
+                saveOffset()
                 countDownTimer.stop();
                 running = false;
             }
@@ -83,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         // Handle minus button touch event
         val minus = findViewById<Button>(R.id.minus)
         minus.setOnClickListener {
-            if (!running && (countDownTimer.base !== minTime )) {
+            if (!running && (countDownTimer.base > minTime )) {
                 countDownTimer.base = countDownTimer.base - duration
             }
         }
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     // Update stopwatch base
     fun setBaseTime() {
-        countDownTimer.base = startTime
+        countDownTimer.base = (SystemClock.elapsedRealtime() - offset) + startTime
     }
 
     // Record the offset
