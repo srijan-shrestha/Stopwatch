@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Store information before activity get destroyed
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putLong(OFFSET_KEY, offset)
         outState.putBoolean(RUNNING_KEY, running)
